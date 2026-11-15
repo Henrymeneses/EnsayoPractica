@@ -359,4 +359,74 @@ public class Utilidades {
         }
         return trac;
     }
+
+
+
+    // ==========================================
+    // MÉTODOS SOBRECARGADOS DE IMPRESIÓN (HU7)
+    // ==========================================
+
+    // Sobrecarga 1: Imprimir información de un Cliente
+    public String imprimirInformacion(Cliente c) {
+        System.out.println("[CLIENTE] Cédula: " + c.getCedula() + " | Nombre: " + c.getNombre() + " " + c.getApellido() + 
+                           " | Tel: " + c.getTelefono() + " | Licencia: " + c.getLicenciaConduccion());
+        return c.getCedula();
+    }
+
+    // Sobrecarga 2: Imprimir información de un Vehículo (con polimorfismo)
+    public String imprimirInformacion(Vehiculo veh) {
+        String detalle = "[VEHÍCULO] Placa: " + veh.getPlaca() + " | Marca: " + veh.getMarca() + 
+                         " | Modelo: " + veh.getModelo() + " | Precio Día: $" + veh.getPrecioDiario() + 
+                         " | Estado: " + veh.getEstado();
+        if (veh instanceof CarroSedan) {
+            CarroSedan s = (CarroSedan) veh;
+            detalle += " | Tipo: Sedán (" + s.getTipoCombustible() + ", " + s.getTransmision() + ")";
+        } else if (veh instanceof CamionetaSUV) {
+            CamionetaSUV suv = (CamionetaSUV) veh;
+            detalle += " | Tipo: SUV (" + suv.getTraccion() + ", Maletero: " + suv.getCapacidadMaletero() + "L)";
+        }
+        System.out.println(detalle);
+        return veh.getPlaca();
+    }
+
+    // Sobrecarga 3: Imprimir información de un Contrato de Renting
+    public String imprimirInformacion(ContratoRenting cr) {
+        System.out.println("[CONTRATO] ID: " + cr.getIdContrato() + " | Cliente Cédula: " + cr.getCedulaCliente() + 
+                           " | Vehículo Placa: " + cr.getPlacaVehiculo() + " | Inicio: " + cr.getFechaInicio() + 
+                           " | Fin: " + cr.getFechaFin() + " | Días: " + cr.getTotalDias() + " | Total: $" + cr.getValorTotal());
+        return cr.getIdContrato();
+    }
+
+    // Informe General Agrupado e Ingresos Totales (HU7)
+    public float imprimirInformeGeneral(LinkedList<Cliente> clientes, LinkedList<Vehiculo> vehiculos, 
+                                        Queue<ContratoRenting> activos, Stack<ContratoRenting> finalizados) {
+        System.out.println("\n========== INFORME GENERAL DEL SISTEMA ==========");
+        
+        System.out.println("\n--- LISTADO DE CLIENTES REGISTRADOS ---");
+        if (clientes.isEmpty()) { System.out.println("No hay clientes registrados."); }
+        for (Cliente c : clientes) { imprimirInformacion(c); }
+
+        System.out.println("\n--- LISTADO DE VEHÍCULOS REGISTRADOS ---");
+        if (vehiculos.isEmpty()) { System.out.println("No hay vehículos registrados."); }
+        for (Vehiculo veh : vehiculos) { imprimirInformacion(veh); }
+
+        System.out.println("\n--- CONTRATOS ACTIVOS (COLA) ---");
+        if (activos.isEmpty()) { System.out.println("No hay contratos activos."); }
+        for (ContratoRenting cr : activos) { imprimirInformacion(cr); }
+
+        System.out.println("\n--- CONTRATOS FINALIZADOS (HISTORIAL - PILA) ---");
+        if (finalizados.isEmpty()) { System.out.println("No hay contratos finalizados."); }
+        for (ContratoRenting cr : finalizados) { imprimirInformacion(cr); }
+
+        // Cálculo de ingresos totales generados por renting (activos + finalizados)
+        float ingresosTotales = 0;
+        for (ContratoRenting cr : activos) { ingresosTotales += cr.getValorTotal(); }
+        for (ContratoRenting cr : finalizados) { ingresosTotales += cr.getValorTotal(); }
+
+        System.out.println("\n================================================");
+        System.out.println("TOTAL DE INGRESOS GENERADOS POR RENTING: $" + ingresosTotales);
+        System.out.println("================================================");
+
+        return ingresosTotales;
+    }
 }
