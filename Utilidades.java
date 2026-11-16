@@ -429,4 +429,100 @@ public class Utilidades {
 
         return ingresosTotales;
     }
+
+
+
+    // ==========================================
+    // MENÚS Y SUBMENÚS (HU5) - Ninguno es void, retornan opciones o estados
+    // ==========================================
+
+    public int mostrarMenuPrincipal(Scanner sc) {
+        System.out.println("\n===== SISTEMA DE RENTING DE CARROS =====");
+        System.out.println("1. GESTIÓN DE CLIENTES");
+        System.out.println("2. GESTIÓN DE VEHÍCULOS");
+        System.out.println("3. GESTIÓN DE CONTRATOS DE RENTING");
+        System.out.println("4. IMPRIMIR INFORME GENERAL E INGRESOS");
+        System.out.println("5. SALIR DEL SISTEMA");
+        System.out.println("Seleccione una opción:");
+        return v.validaEntero(sc);
+    }
+
+    public int gestionarClientesMenu(LinkedList<Cliente> clientes, Queue<ContratoRenting> contratos, LinkedList<Vehiculo> vehiculos, Scanner sc) {
+        boolean enSubmenu = true;
+        while (enSubmenu) {
+            System.out.println("\n--- 1. GESTIÓN DE CLIENTES ---");
+            System.out.println("1.1 Registrar cliente");
+            System.out.println("1.2 Modificar cliente");
+            System.out.println("1.3 Eliminar cliente");
+            System.out.println("1.4 Buscar cliente");
+            System.out.println("1.5 Volver al menú principal");
+            int opt = v.validaEntero(sc);
+            switch (opt) {
+                case 1: registrarCliente(clientes, sc); break;
+                case 2: modificarCliente(clientes, sc); break;
+                case 3: eliminarCliente(clientes, contratos, vehiculos, sc); break;
+                case 4: 
+                    String ced = v.validaCedulaOCodigo(sc, "Ingrese la cédula a buscar:");
+                    Cliente c = buscarClientePorCedula(clientes, ced);
+                    if (c != null) { imprimirInformacion(c); } else { System.out.println("Cliente no encontrado."); }
+                    break;
+                case 5: enSubmenu = false; break;
+                default: System.out.println("Opción inválida."); break;
+            }
+        }
+        return 1;
+    }
+
+    public int gestionarVehiculosMenu(LinkedList<Vehiculo> vehiculos, Scanner sc) {
+        boolean enSubmenu = true;
+        while (enSubmenu) {
+            System.out.println("\n--- 2. GESTIÓN DE VEHÍCULOS ---");
+            System.out.println("2.1 Registrar vehículo");
+            System.out.println("2.2 Modificar vehículo");
+            System.out.println("2.3 Eliminar vehículo");
+            System.out.println("2.4 Buscar vehículo");
+            System.out.println("2.5 Volver al menú principal");
+            int opt = v.validaEntero(sc);
+            switch (opt) {
+                case 1: registrarVehiculo(vehiculos, sc); break;
+                case 2: modificarVehiculo(vehiculos, sc); break;
+                case 3: eliminarVehiculo(vehiculos, sc); break;
+                case 4:
+                    String placa = v.validaCedulaOCodigo(sc, "Ingrese la placa a buscar:");
+                    Vehiculo veh = buscarVehiculoPorPlaca(vehiculos, placa);
+                    if (veh != null) { imprimirInformacion(veh); } else { System.out.println("Vehículo no encontrado."); }
+                    break;
+                case 5: enSubmenu = false; break;
+                default: System.out.println("Opción inválida."); break;
+            }
+        }
+        return 1;
+    }
+
+    public int gestionarContratosMenu(Queue<ContratoRenting> activos, Stack<ContratoRenting> finalizados, 
+                                      LinkedList<Cliente> clientes, LinkedList<Vehiculo> vehiculos, Scanner sc) {
+        boolean enSubmenu = true;
+        while (enSubmenu) {
+            System.out.println("\n--- 3. GESTIÓN DE CONTRATOS DE RENTING ---");
+            System.out.println("3.1 Registrar nuevo contrato");
+            System.out.println("3.2 Modificar contrato");
+            System.out.println("3.3 Finalizar contrato (devolución)");
+            System.out.println("3.4 Buscar contrato");
+            System.out.println("3.5 Volver al menú principal");
+            int opt = v.validaEntero(sc);
+            switch (opt) {
+                case 1: registrarContrato(activos, finalizados, clientes, vehiculos, sc); break;
+                case 2: modificarContrato(activos, vehiculos, sc); break;
+                case 3: finalizarContrato(activos, finalizados, vehiculos, sc); break;
+                case 4:
+                    String id = v.validaTextoNoVacio(sc, "Ingrese el ID del contrato a buscar:");
+                    ContratoRenting cr = buscarContrato(activos, finalizados, id);
+                    if (cr != null) { imprimirInformacion(cr); } else { System.out.println("Contrato no encontrado."); }
+                    break;
+                case 5: enSubmenu = false; break;
+                default: System.out.println("Opción inválida."); break;
+            }
+        }
+        return 1;
+    }
 }
